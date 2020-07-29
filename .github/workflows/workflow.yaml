@@ -153,8 +153,8 @@ jobs:
           TF_VAR_bootstrap_rancher: true
           TF_VAR_vsphere_resource_pool: ${{ secrets.TF_VSPHERE_RESOURCE_POOL }}
           TF_VAR_use_auto_dns_url: true
-          TF_VAR_static_ip_addresses: '["10.96.161.2/24", "10.96.161.3/24", "10.96.161.4/24"]'
-          TF_VAR_default_gateway: "10.96.161.1"
+          TF_VAR_static_ip_addresses: '["10.96.160.252/24", "10.96.160.253/24", "10.96.160.254/24"]'
+          TF_VAR_default_gateway: "10.96.160.1"
         run: |
           export COMMIT_ID=$(echo $GITHUB_CONTEXT | jq -r '.sha' | cut -c1-7)
           mkdir deliverables-$COMMIT_ID-static
