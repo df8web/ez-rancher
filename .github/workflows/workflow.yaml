@@ -67,7 +67,7 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
           TF_VAR_control_plane_count: 1
           TF_VAR_worker_count: 2
-          TF_VAR_vm_template_name: bionic-server-cloudimg-amd64
+          TF_VAR_vm_template_name: ubuntu-18.04-server-cloudimg-amd64
           TF_VAR_vsphere_vcenter: ${{ secrets.TF_VSPHERE_VCENTER }}
           TF_VAR_vsphere_user: ${{ secrets.TF_VSPHERE_USER }}
           TF_VAR_vsphere_password: ${{ secrets.TF_VSPHERE_PASSWORD }}
