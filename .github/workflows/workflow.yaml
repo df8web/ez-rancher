@@ -93,11 +93,15 @@ jobs:
       - name: Deploy
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          COMMIT_ID=$(echo $GITHUB_CONTEXT | jq -r '.sha' | cut -c1-7)
-          sudo docker run --rm -v `pwd`/deliverables-$COMMIT_ID:/terraform/vsphere-rancher/deliverables \
-            --env-file env.list \
-            ez-rancher:$COMMIT_ID apply -input="false" -auto-approve         
+        uses: nick-invision/retry@v1
+        with:
+          timeout_minutes: 45
+          max_attempts: 3
+          command: |
+            COMMIT_ID=$(echo $GITHUB_CONTEXT | jq -r '.sha' | cut -c1-7)
+            sudo docker run --rm -v `pwd`/deliverables-$COMMIT_ID:/terraform/vsphere-rancher/deliverables \
+              --env-file env.list \
+              ez-rancher:$COMMIT_ID apply -input="false" -auto-approve         
 
       - name: Wait for User Cluster
         env:
