@@ -123,6 +123,14 @@ jobs:
             --env-file env.list \
             ez-rancher:$COMMIT_ID destroy -input="false" -auto-approve
           rm --rf deliverables-$COMMIT_ID
+
+      - name: Cleanup
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        if: ${{ always() }}
+        run: |
+          COMMIT_ID=$(echo $GITHUB_CONTEXT | jq -r '.sha' | cut -c1-7)
+          rm --rf deliverables-$COMMIT_ID
       
       - name: Remove image
         env:
