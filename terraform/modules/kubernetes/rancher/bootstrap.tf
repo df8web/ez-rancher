@@ -80,6 +80,13 @@ resource "rancher2_node_template" "vsphere" {
   }
 }
 
+resource "time_sleep" "wait_user_cluster_create" {
+  count      = var.create_user_cluster && var.bootstrap_rancher ? 1 : 0
+  depends_on = [rancher2_setting.server_url[0]]
+
+  create_duration = "10s"
+}
+
 resource "rancher2_cluster" "cluster" {
   count    = var.create_user_cluster && var.bootstrap_rancher ? 1 : 0
   name     = var.user_cluster_name
