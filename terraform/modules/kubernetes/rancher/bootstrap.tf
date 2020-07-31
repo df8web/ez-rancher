@@ -94,14 +94,14 @@ resource "rancher2_cluster" "cluster" {
 }
 
 resource "time_sleep" "wait_user_cluster_destroy" {
-  count = var.create_user_cluster && var.bootstrap_rancher ? 1 : 0
-  depends_on  = [rancher2_cluster.cluster[0]]
+  count      = var.create_user_cluster && var.bootstrap_rancher ? 1 : 0
+  depends_on = [rancher2_cluster.cluster[0]]
 
   destroy_duration = "30s"
 }
 
 resource "rancher2_node_pool" "nodes" {
-  count = var.create_user_cluster && var.bootstrap_rancher ? 1 : 0
+  count      = var.create_user_cluster && var.bootstrap_rancher ? 1 : 0
   depends_on = [time_sleep.wait_user_cluster_destroy[0]]
 
   cluster_id       = rancher2_cluster.cluster[0].id
