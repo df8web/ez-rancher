@@ -82,20 +82,13 @@ jobs:
           TF_VAR_bootstrap_rancher: true
           TF_VAR_vsphere_resource_pool: ${{ secrets.TF_VSPHERE_RESOURCE_POOL }}
           TF_VAR_use_auto_dns_url: true
+          TF_VAR_rancher_create_user_cluster: true
         run: |
           export COMMIT_ID=$(echo $GITHUB_CONTEXT | jq -r '.sha' | cut -c1-7)
           mkdir deliverables-$COMMIT_ID
           env | grep TF_ > env.list
           echo TF_VAR_vm_name=$COMMIT_ID >> env.list
-
-      - name: Plan
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          COMMIT_ID=$(echo $GITHUB_CONTEXT | jq -r '.sha' | cut -c1-7)        
-          sudo docker run --rm -v `pwd`/deliverables-$COMMIT_ID:/terraform/vsphere-rancher/deliverables \
-            --env-file env.list \
-            ez-rancher:$COMMIT_ID plan -input="false"
+          echo TF_VAR_rancher_user_cluster_name=$COMMIT_ID-user >> env.list
 
       - name: Deploy
         env:
@@ -105,6 +98,13 @@ jobs:
           sudo docker run --rm -v `pwd`/deliverables-$COMMIT_ID:/terraform/vsphere-rancher/deliverables \
             --env-file env.list \
             ez-rancher:$COMMIT_ID apply -input="false" -auto-approve         
+
+      - name: Wait for User Cluster
+        run: |
+          sudo docker run --rm \
+            -v ${PWD}/hack/verify_uc.sh:/terraform/vsphere-rancher/verify_uc.sh \
+            -v ${PWD}/deliverables:/terraform/vsphere-rancher/deliverables \
+            --entrypoint /bin/sh ez-rancher:latest verify_uc.sh deliverables
 
       - name: Destroy
         env:
