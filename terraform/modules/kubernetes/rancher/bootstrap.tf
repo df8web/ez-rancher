@@ -3,7 +3,7 @@ resource "null_resource" "wait_for_rancher" {
 
   depends_on = [helm_release.rancher]
   provisioner "local-exec" {
-    command = "count=0; until $(curl -ks --connect-timeout 3 ${join("", ["https://", var.cluster_nodes[0].ip, ".nip.io"])} > /dev/null 2>&1); do sleep 1; if [ $count -eq 100 ]; then break; fi; count=`expr $count + 1`; done"
+    command = "count=0; until $(curl -ks --connect-timeout 3 ${join("", ["https://", var.cluster_nodes[0].ip, ".nip.io"])} > /dev/null 2>&1); do sleep 1; if [ $count -eq 150 ]; then break; fi; count=`expr $count + 1`; done"
   }
 }
 
@@ -93,31 +93,17 @@ resource "rancher2_cluster" "cluster" {
   }
 }
 
-resource "rancher2_node_pool" "control_plane" {
+resource "rancher2_node_pool" "nodes" {
   count = var.create_user_cluster && var.bootstrap_rancher ? 1 : 0
 
   cluster_id       = rancher2_cluster.cluster[0].id
   provider         = rancher2.admin
-  name             = join("", [var.user_cluster_name, "-control-plane"])
-  hostname_prefix  = join("", [var.user_cluster_name, "-cp-0"])
+  name             = join("", [var.user_cluster_name, "-nodes"])
+  hostname_prefix  = join("", [var.user_cluster_name, "-node0"])
   node_template_id = rancher2_node_template.vsphere[0].id
-  quantity         = 1
+  quantity         = 3
   control_plane    = true
   etcd             = true
-  worker           = false
-}
-
-resource "rancher2_node_pool" "worker" {
-  count = var.create_user_cluster && var.bootstrap_rancher ? 1 : 0
-
-  cluster_id       = rancher2_cluster.cluster[0].id
-  provider         = rancher2.admin
-  name             = join("", [var.user_cluster_name, "-workers"])
-  hostname_prefix  = join("", [var.user_cluster_name, "-wrk-0"])
-  node_template_id = rancher2_node_template.vsphere[0].id
-  quantity         = 2
-  control_plane    = false
-  etcd             = false
   worker           = true
 }
 

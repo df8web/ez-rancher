@@ -83,7 +83,7 @@ resource "helm_release" "rancher" {
   repository       = "https://releases.rancher.com/server-charts/stable"
   namespace        = "cattle-system"
   create_namespace = "true"
-  wait             = "true"
+  wait             = "false"
 
   set {
     name  = "namespace"
