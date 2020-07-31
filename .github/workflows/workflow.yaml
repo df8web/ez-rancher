@@ -105,8 +105,8 @@ jobs:
         run: |
           COMMIT_ID=$(echo $GITHUB_CONTEXT | jq -r '.sha' | cut -c1-7)
           sudo docker run --rm \
-            -v ${PWD}/hack/verify_uc.sh:/terraform/vsphere-rancher/verify_uc.sh \
-            -v ${PWD}/deliverables:/terraform/vsphere-rancher/deliverables \
+            -v `pwd`/hack/verify_uc.sh:/terraform/vsphere-rancher/verify_uc.sh \
+            -v `pwd`/deliverables-$COMMIT_ID:/terraform/vsphere-rancher/deliverables \
             --entrypoint /bin/sh ez-rancher:$COMMIT_ID verify_uc.sh deliverables
 
       - name: Destroy
