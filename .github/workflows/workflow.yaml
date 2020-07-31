@@ -100,11 +100,14 @@ jobs:
             ez-rancher:$COMMIT_ID apply -input="false" -auto-approve         
 
       - name: Wait for User Cluster
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
+          COMMIT_ID=$(echo $GITHUB_CONTEXT | jq -r '.sha' | cut -c1-7)
           sudo docker run --rm \
             -v ${PWD}/hack/verify_uc.sh:/terraform/vsphere-rancher/verify_uc.sh \
             -v ${PWD}/deliverables:/terraform/vsphere-rancher/deliverables \
-            --entrypoint /bin/sh ez-rancher:latest verify_uc.sh deliverables
+            --entrypoint /bin/sh ez-rancher:$COMMIT_ID verify_uc.sh deliverables
 
       - name: Destroy
         env:
