@@ -130,7 +130,7 @@ jobs:
         if: ${{ always() }}
         run: |
           COMMIT_ID=$(echo $GITHUB_CONTEXT | jq -r '.sha' | cut -c1-7)
-          rm --rf deliverables-$COMMIT_ID
+          rm -rf deliverables-$COMMIT_ID
       
       - name: Remove image
         env:
