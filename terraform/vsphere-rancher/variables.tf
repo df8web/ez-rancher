@@ -149,3 +149,13 @@ variable "use_auto_dns_url" {
   type    = bool
   default = false
 }
+
+variable "http_proxy" {
+  type    = string
+  default = ""
+}
+
+variable "https_proxy" {
+  type    = string
+  default = ""
+}
