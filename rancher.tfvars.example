@@ -98,3 +98,6 @@ http_proxy = "http://10.1.1.1:3128"
 
 # (Optional) HTTPS proxy server. Also specify http_proxy.
 https_proxy = "http://10.1.1.1:3128"
+
+# (Optional) Comma separated string of URLs that should be excluded from proxying. Ignored if no proxy is set.
+no_proxy = "localhost,127.0.0.1,docker-registry.example.com,.corp"

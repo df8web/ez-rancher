@@ -159,3 +159,8 @@ variable "https_proxy" {
   type    = string
   default = ""
 }
+
+variable "no_proxy" {
+  type    = string
+  default = ""
+}
