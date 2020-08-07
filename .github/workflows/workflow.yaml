@@ -187,7 +187,7 @@ jobs:
           COMMIT_ID=$(echo $GITHUB_CONTEXT | jq -r '.sha' | cut -c1-7)
           sudo docker rmi ez-rancher:$COMMIT_ID
 
-docker-deploy-proxy:
+  docker-deploy-proxy:
     name: Docker Deploy - Proxy
     runs-on: docker-vpc
     steps:
