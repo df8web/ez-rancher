@@ -1,3 +1,16 @@
+terraform {
+  required_providers {
+    helm = {
+      source = "hashicorp/helm"
+      version = "1.2.4"
+    }
+    rke = {
+      source = "rancher/rke"
+      version = "1.0.1"
+    }
+  }
+}
+
 locals {
   deliverables_path  = var.deliverables_path == "" ? "./deliverables" : var.deliverables_path
   alias_initial_node = var.rancher_server_url == join("", [var.cluster_nodes[0].ip, ".nip.io"]) ? 1 : 0
@@ -77,8 +90,14 @@ resource "helm_release" "cert-manager" {
   }
 }
 
+resource "time_sleep" "wait_for_cert_manager" {
+  depends_on = [helm_release.cert-manager]
+
+  create_duration = "30s"
+}
+
 resource "helm_release" "rancher" {
-  depends_on       = [helm_release.cert-manager]
+  depends_on       = [helm_release.cert-manager, time_sleep.wait_for_cert_manager]
   name             = "rancher"
   chart            = "rancher"
   repository       = "https://releases.rancher.com/server-charts/stable"
