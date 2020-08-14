@@ -8,6 +8,10 @@ terraform {
       source  = "rancher/rke"
       version = "1.0.1"
     }
+    rancher2 = {
+      source = "rancher/rancher2"
+      version = "1.10.0"
+    }
   }
 }
 
@@ -58,7 +62,6 @@ resource "local_file" "ssh_public_key" {
 }
 
 provider "helm" {
-  version = "1.2.2"
   kubernetes {
     config_path = format("${local.deliverables_path}/kubeconfig")
   }
