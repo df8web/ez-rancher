@@ -74,7 +74,6 @@ spec:
                 container('tf') {
                     sh """
                         cd terraform/vsphere-rancher
-                        ../../hack/gh_actions_install_rke_provider.sh
                         terraform init
                         """
                 }
