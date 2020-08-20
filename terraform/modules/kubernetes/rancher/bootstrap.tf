@@ -77,6 +77,10 @@ resource "rancher2_node_template" "vsphere" {
     folder      = var.rancher_vsphere_folder
     network     = [var.rancher_vsphere_network]
     pool        = var.rancher_vsphere_pool
+    creation_type = "template"
+    clone_from = var.user_cluster_template
+    cloudinit = var.user_cluster_cloudinit
+    vapp_property = var.user_cluster_vapp_properties
   }
 }
 

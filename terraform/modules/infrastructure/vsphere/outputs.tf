@@ -20,3 +20,13 @@ output "ssh_private_key" {
   value     = tls_private_key.key.private_key_pem
   sensitive = true
 }
+
+output "guestinfo_userdata" {
+  value = data.template_file.userdata.rendered
+  sensitive = true
+}
+
+output "kickstart_userdata" {
+  value = base64encode(data.template_file.kickstart_userdata[0].rendered)
+  sensitive = true
+}
