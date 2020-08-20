@@ -1,13 +1,13 @@
 terraform {
   required_providers {
     helm = {
-      source  = "hashicorp/helm"
+      source = "hashicorp/helm"
     }
     rke = {
-      source  = "rancher/rke"
+      source = "rancher/rke"
     }
     rancher2 = {
-      source  = "rancher/rancher2"
+      source = "rancher/rancher2"
     }
   }
 }
