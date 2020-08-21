@@ -65,7 +65,7 @@ variable "user_cluster_cloudinit" {
 }
 
 variable "user_cluster_vapp_properties" {
-  type = list
+  type    = list
   default = []
 }
 
@@ -121,4 +121,39 @@ variable "rancher_vsphere_pool" {
 variable "rancher_node_template_disk_size" {
   type    = number
   default = 51200
+}
+
+variable "create_trident_cluster_template" {
+  type    = bool
+  default = false
+}
+
+variable "trident_username" {
+  type    = string
+  default = ""
+}
+
+variable "trident_password" {
+  type    = string
+  default = ""
+}
+
+variable "trident_tenant_name" {
+  type    = string
+  default = ""
+}
+
+variable "trident_svip" {
+  type    = string
+  default = ""
+}
+
+variable "trident_mvip" {
+  type    = string
+  default = ""
+}
+
+variable "trident_use_chap" {
+  type    = bool
+  default = true
 }

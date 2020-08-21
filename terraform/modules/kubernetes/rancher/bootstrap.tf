@@ -69,17 +69,17 @@ resource "rancher2_node_template" "vsphere" {
   description         = "vsphere"
   cloud_credential_id = rancher2_cloud_credential.vsphere[0].id
   vsphere_config {
-    cpu_count   = var.user_cluster_cpu
-    memory_size = var.user_cluster_memoryMB
-    datacenter  = var.rancher_vsphere_datacenter
-    datastore   = var.rancher_vsphere_datastore
-    disk_size   = var.rancher_node_template_disk_size
-    folder      = var.rancher_vsphere_folder
-    network     = [var.rancher_vsphere_network]
-    pool        = var.rancher_vsphere_pool
+    cpu_count     = var.user_cluster_cpu
+    memory_size   = var.user_cluster_memoryMB
+    datacenter    = var.rancher_vsphere_datacenter
+    datastore     = var.rancher_vsphere_datastore
+    disk_size     = var.rancher_node_template_disk_size
+    folder        = var.rancher_vsphere_folder
+    network       = [var.rancher_vsphere_network]
+    pool          = var.rancher_vsphere_pool
     creation_type = "template"
-    clone_from = var.user_cluster_template
-    cloudinit = var.user_cluster_cloudinit
+    clone_from    = var.user_cluster_template
+    cloudinit     = var.user_cluster_cloudinit
     vapp_property = var.user_cluster_vapp_properties
   }
 }
@@ -137,4 +137,79 @@ resource "local_file" "rancher_api_key" {
 
   filename = format("${local.deliverables_path}/rancher_token")
   content  = rancher2_bootstrap.admin[0].token
+}
+
+data "http" "trident_installer_crd" {
+  count = var.bootstrap_rancher && var.create_trident_cluster_template ? 1 : 0
+  url = "https://raw.githubusercontent.com/sgryczan/TridentInstaller/master/deploy/crds/tridentinstall.czan.io_tridentinstallations_crd.yaml"
+}
+
+data "http" "trident_installer_operator" {
+  count = var.bootstrap_rancher && var.create_trident_cluster_template ? 1 : 0
+  url = "https://raw.githubusercontent.com/sgryczan/TridentInstaller/master/deploy/operator.yaml"
+}
+
+data "http" "trident_installer_role" {
+  count = var.bootstrap_rancher && var.create_trident_cluster_template ? 1 : 0
+  url = "https://raw.githubusercontent.com/sgryczan/TridentInstaller/master/deploy/role.yaml"
+}
+
+data "http" "trident_installer_rolebinding" {
+  count = var.bootstrap_rancher && var.create_trident_cluster_template ? 1 : 0
+  url = "https://raw.githubusercontent.com/sgryczan/TridentInstaller/master/deploy/role_binding.yaml"
+}
+
+data "http" "trident_installer_serviceaccount" {
+  count = var.bootstrap_rancher && var.create_trident_cluster_template ? 1 : 0
+  url = "https://raw.githubusercontent.com/sgryczan/TridentInstaller/master/deploy/service_account.yaml"
+}
+
+data "template_file" "trident_namespace" {
+  count = var.bootstrap_rancher && var.create_trident_cluster_template ? 1 : 0
+
+  template = file("${path.module}/templates/trident_ns.yaml.tpl")
+}
+
+data "template_file" "trident_installation" {
+  count = var.bootstrap_rancher && var.create_trident_cluster_template ? 1 : 0
+
+  template = file("${path.module}/templates/trident_installation.yaml.tpl")
+  vars = {
+    trident_username = var.trident_username
+    trident_password = var.trident_password
+    tenant_name      = var.trident_tenant_name
+    svip             = var.trident_svip
+    mvip             = var.trident_mvip
+    use_chap         = var.trident_use_chap
+  }
+}
+
+resource "rancher2_cluster_template" "template" {
+  count = var.bootstrap_rancher && var.create_trident_cluster_template ? 1 : 0
+
+  name     = "trident-default"
+  provider = rancher2.admin
+  template_revisions {
+    name    = "v1"
+    default = true
+    cluster_config {
+      rke_config {
+        addons = <<EOT
+${data.template_file.trident_namespace[0].rendered}
+---
+${data.http.trident_installer_crd[0].body}
+---
+${data.http.trident_installer_operator[0].body}
+---
+${data.http.trident_installer_role[0].body}
+---
+${data.http.trident_installer_rolebinding[0].body}
+---
+${data.http.trident_installer_serviceaccount[0].body}
+---
+${data.template_file.trident_installation[0].rendered}
+EOT
+      }
+    }
+  }
 }

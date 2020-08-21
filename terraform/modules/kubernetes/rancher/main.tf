@@ -9,6 +9,9 @@ terraform {
     rancher2 = {
       source = "rancher/rancher2"
     }
+    http = {
+      source = "hashicorp/http"
+    }
   }
 }
 

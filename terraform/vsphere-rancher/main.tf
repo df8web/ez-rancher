@@ -69,4 +69,13 @@ module "rancher" {
   rancher_vsphere_network    = var.vm_network
   rancher_vsphere_pool       = var.vsphere_resource_pool
   bootstrap_rancher          = var.bootstrap_rancher
+
+  create_trident_cluster_template = var.create_trident_cluster_template
+  trident_username                = var.trident_username
+  trident_password                = var.trident_password
+  trident_tenant_name             = var.trident_tenant_name
+  trident_svip                    = var.trident_svip
+  trident_mvip                    = var.trident_mvip
+  trident_use_chap                = var.trident_use_chap
+
 }

@@ -164,3 +164,38 @@ variable "no_proxy" {
   type    = string
   default = ""
 }
+
+variable "create_trident_cluster_template" {
+  type    = bool
+  default = false
+}
+
+variable "trident_username" {
+  type    = string
+  default = ""
+}
+
+variable "trident_password" {
+  type    = string
+  default = ""
+}
+
+variable "trident_tenant_name" {
+  type    = string
+  default = ""
+}
+
+variable "trident_svip" {
+  type    = string
+  default = ""
+}
+
+variable "trident_mvip" {
+  type    = string
+  default = ""
+}
+
+variable "trident_use_chap" {
+  type    = bool
+  default = true
+}

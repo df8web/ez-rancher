@@ -22,11 +22,11 @@ output "ssh_private_key" {
 }
 
 output "guestinfo_userdata" {
-  value = data.template_file.userdata.rendered
+  value     = data.template_file.userdata.rendered
   sensitive = true
 }
 
 output "kickstart_userdata" {
-  value = base64encode(data.template_file.kickstart_userdata[0].rendered)
+  value     = base64encode(data.template_file.kickstart_userdata[0].rendered)
   sensitive = true
 }
