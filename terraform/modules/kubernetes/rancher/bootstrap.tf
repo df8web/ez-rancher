@@ -3,7 +3,7 @@ resource "null_resource" "wait_for_rancher" {
 
   depends_on = [helm_release.rancher]
   provisioner "local-exec" {
-    command = "count=0; until $(curl -ks --connect-timeout 3 ${join("", ["https://", var.cluster_nodes[0].ip, ".nip.io"])} > /dev/null 2>&1); do sleep 1; if [ $count -eq 100 ]; then break; fi; count=`expr $count + 1`; done"
+    command = "count=0; until $(curl -ks --connect-timeout 3 ${join("", ["https://", var.cluster_nodes[0].ip, ".nip.io"])} | grep cattle > /dev/null 2>&1); do sleep 1; if [ $count -eq 100 ]; then break; fi; count=`expr $count + 1`; done"
   }
 }
 
@@ -60,6 +60,19 @@ resource "rancher2_setting" "server_url" {
   value = join("", ["https://", var.rancher_server_url])
 }
 
+data "template_file" "kickstart_userdata" {
+  count      = var.bootstrap_rancher ? 1 : 0
+  template = file("${path.module}/templates/kickstart-userdata.yaml.tpl")
+  vars = {
+    ssh_public_key = var.ssh_public_key
+  }
+}
+
+data "template_file" "userdata" {
+  count      = var.bootstrap_rancher ? 1 : 0
+  template = file("${path.module}/templates/userdata.yaml.tpl")
+}
+
 resource "rancher2_node_template" "vsphere" {
   count = var.bootstrap_rancher ? 1 : 0
 
@@ -79,8 +92,10 @@ resource "rancher2_node_template" "vsphere" {
     pool          = var.rancher_vsphere_pool
     creation_type = "template"
     clone_from    = var.user_cluster_template
-    cloudinit     = var.user_cluster_cloudinit
-    vapp_property = var.user_cluster_vapp_properties
+    cloudinit     = data.template_file.userdata[0].rendered
+    vapp_property = [
+      "user-data=${data.template_file.kickstart_userdata[0].rendered}"
+    ]
   }
 }
 

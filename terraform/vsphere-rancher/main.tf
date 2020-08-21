@@ -51,11 +51,6 @@ module "rancher" {
   rancher_password    = var.rancher_password
   create_user_cluster = var.rancher_create_user_cluster
   user_cluster_name   = var.rancher_user_cluster_name
-
-  user_cluster_cloudinit = module.cluster_nodes.guestinfo_userdata
-  user_cluster_vapp_properties = [
-    "user-data=${module.cluster_nodes.kickstart_userdata}"
-  ]
   user_cluster_template = var.vm_template_name
 
   rancher_vsphere_username = var.vsphere_user

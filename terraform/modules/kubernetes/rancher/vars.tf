@@ -60,15 +60,6 @@ variable "user_cluster_memoryMB" {
   default = 6144
 }
 
-variable "user_cluster_cloudinit" {
-  default = ""
-}
-
-variable "user_cluster_vapp_properties" {
-  type    = list
-  default = []
-}
-
 variable "user_cluster_template" {
   default = ""
 }
