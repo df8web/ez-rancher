@@ -35,6 +35,7 @@ FROM alpine:3.12.0 as final
 ARG GIT_COMMIT=unspecified
 LABEL git_commit=$GIT_COMMIT
 
+RUN apk add --no-cache curl
 COPY --from=binaries /bin/terragrunt /bin/kubectl /bin/terraform /bin/
 
 COPY terraform/ /terraform/
