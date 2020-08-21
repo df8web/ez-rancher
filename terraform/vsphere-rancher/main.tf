@@ -48,9 +48,9 @@ module "rancher" {
   ssh_private_key    = module.cluster_nodes.ssh_private_key
   ssh_public_key     = module.cluster_nodes.ssh_public_key
 
-  rancher_password    = var.rancher_password
-  create_user_cluster = var.rancher_create_user_cluster
-  user_cluster_name   = var.rancher_user_cluster_name
+  rancher_password      = var.rancher_password
+  create_user_cluster   = var.rancher_create_user_cluster
+  user_cluster_name     = var.rancher_user_cluster_name
   user_cluster_template = var.vm_template_name
 
   rancher_vsphere_username = var.vsphere_user
