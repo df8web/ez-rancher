@@ -101,3 +101,26 @@ rancher_password = "solidfire"
 
 # (Optional) Comma separated string of URLs that should be excluded from proxying. Ignored if no proxy is set.
 # no_proxy = "localhost,127.0.0.1,docker-registry.example.com,.corp"
+
+# ===================== #
+# Trident configuration #
+# ===================== #
+
+# (Optional) Create a trident_default cluster template during bootstrapping.
+# Requires bootstrap_rancher.
+#
+# Clusters deployed with this template will have NetApp Trident installed automatically,
+# and will have the following storage classes available for use:
+#
+# NAME                         PROVISIONER             
+# solidfire-bronze             csi.trident.netapp.io
+# solidfire-gold               csi.trident.netapp.io
+# solidfire-silver             csi.trident.netapp.io
+
+create_trident_cluster_template = false
+trident_username                = "solidfire"
+trident_password                = "solidfire"
+trident_tenant_name             = "my_cluster_tenant"
+trident_svip                    = "10.0.0.1"
+trident_mvip                    = "10.0.0.2"
+trident_use_chap                = true
