@@ -35,6 +35,7 @@ spec:
       image: docker:18.05-dind
       args:
       - --dns=8.8.8.8
+      - --dns-opt='options single-request'
       securityContext:
         privileged: true
       volumeMounts:
