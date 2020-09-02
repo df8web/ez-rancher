@@ -89,7 +89,7 @@ spec:
             steps {
                 container('dind') {
                     sh """
-                        docker build --no-cache -t ez-rancher:${COMMIT_SLUG} .
+                        docker build --network host --no-cache -t ez-rancher:${COMMIT_SLUG} .
                         """
                 }
             }
