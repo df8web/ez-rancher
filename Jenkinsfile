@@ -40,8 +40,19 @@ spec:
       volumeMounts:
         - name: dind-storage
           mountPath: /var/lib/docker
+    - name: dind2
+      image: docker:18.05-dind
+      args:
+      - --dns=8.8.8.8
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: dind2-storage
+          mountPath: /var/lib/docker
   volumes:
     - name: dind-storage
+      emptyDir: {}
+    - name: dind2-storage
       emptyDir: {}
 """
       }
@@ -95,24 +106,42 @@ spec:
             }
         }
 
-
         stage ('Deploy') {
-            steps {
-                container('dind') {
-                    withCredentials([file(credentialsId: 'ez-rancher-olab', variable: 'TFVARS')]) {
-                    sh """
-                        cd terraform/vsphere-rancher
-                        apk add --no-cache bash make
-                        cat ${TFVARS} > env.list
-                        echo "TF_VAR_vm_name=ezr-${COMMIT_SLUG}" >> env.list
-                        mkdir deliverables  
-                        EZR_IMAGE_NAME=ez-rancher
-                        EZR_IMAGE_TAG=latest
-                        DELIVERABLES=deliverables
-                        docker run --rm --env-file env.list \
-                            -v `pwd`/deliverables:/terraform/vsphere-rancher/deliverables \
-                            ez-rancher:${COMMIT_SLUG} apply -auto-approve -input=false
-                        """
+            parallel {
+                stage ('DHCP') {
+                    steps {
+                        container('dind') {
+                            withCredentials([file(credentialsId: 'ez-rancher-olab', variable: 'TFVARS')]) {
+                            sh """
+                                cd terraform/vsphere-rancher
+                                apk add --no-cache bash make
+                                cat ${TFVARS} > env.list
+                                echo "TF_VAR_vm_name=ezr-${COMMIT_SLUG}" >> env.list
+                                mkdir deliverables
+                                docker run --rm --env-file env.list \
+                                    -v `pwd`/deliverables:/terraform/vsphere-rancher/deliverables \
+                                    ez-rancher:${COMMIT_SLUG} apply -auto-approve -input=false
+                                """
+                            }
+                        }
+                    }
+                }
+                stage ('Proxy') {
+                    steps {
+                        container('dind2') {
+                            withCredentials([file(credentialsId: 'ez-rancher-proxy', variable: 'TFVARS')]) {
+                            sh """
+                                cd terraform/vsphere-rancher
+                                apk add --no-cache bash make
+                                cat ${TFVARS} > env.list
+                                echo "TF_VAR_vm_name=ezr-${COMMIT_SLUG}-proxy" >> env.list
+                                mkdir deliverables-proxy
+                                docker run --rm --env-file env.list \
+                                    -v `pwd`/deliverables-proxy:/terraform/vsphere-rancher/deliverables \
+                                    ez-rancher:${COMMIT_SLUG} apply -auto-approve -input=false
+                                """
+                            }
+                        }
                     }
                 }
             }
@@ -129,7 +158,20 @@ spec:
                         ez-rancher:${COMMIT_SLUG} destroy -auto-approve -input=false
                     """
             }
+            container('dind2') {
+                sh """
+                    cd terraform/vsphere-rancher
+                    docker run --rm --env-file env.list \
+                        -v `pwd`/deliverables-proxy:/terraform/vsphere-rancher/deliverables \
+                        ez-rancher:${COMMIT_SLUG} destroy -auto-approve -input=false
+                    """
+            }
             container('dind') {
+                sh """
+                    docker rmi ez-rancher:${COMMIT_SLUG}
+                    """
+            }
+            container('dind2') {
                 sh """
                     docker rmi ez-rancher:${COMMIT_SLUG}
                     """
