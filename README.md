@@ -69,6 +69,9 @@ This URL allow you to start using Rancher right away, eliminating the need to co
 
 If using an HTTP/HTTPS proxy server to access the internet, please set both the `http_proxy` and `https_proxy` variables.
 
+The HTTP/HTTPS proxy will be set on the VM OS and docker runtime. The HTTP proxy and no proxy settings will be configured on Rancher server.
+Make sure you add the Service cluster IP range (default: 10.43.0.1⁄16) and any worker cluster controlplane nodes to the `no_proxy` variable.
+
 ## Getting Started
 
 For tfvars config file examples, refer to [tfvars examples](rancher.tfvars.example)

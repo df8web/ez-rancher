@@ -126,4 +126,14 @@ resource "helm_release" "rancher" {
     value = join(" ", formatlist("%s.nip.io", [for node in slice(var.cluster_nodes, local.alias_initial_node, length(var.cluster_nodes)) : node["ip"]]))
   }
 
+  set {
+    name  = "proxy"
+    value = var.http_proxy != "" ? var.http_proxy : ""
+  }
+
+  set {
+    name  = "noProxy"
+    value = replace(var.no_proxy, ",", "\\,")
+  }
+
 }

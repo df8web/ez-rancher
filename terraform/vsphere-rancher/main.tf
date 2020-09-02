@@ -63,4 +63,6 @@ module "rancher" {
   rancher_vsphere_network    = var.vm_network
   rancher_vsphere_pool       = var.vsphere_resource_pool
   bootstrap_rancher          = var.bootstrap_rancher
+  http_proxy                 = var.http_proxy
+  no_proxy                   = var.no_proxy
 }

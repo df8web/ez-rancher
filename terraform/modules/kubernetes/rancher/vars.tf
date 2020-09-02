@@ -109,3 +109,13 @@ variable "rancher_node_template_disk_size" {
   type    = number
   default = 51200
 }
+
+variable "http_proxy" {
+  type    = string
+  default = ""
+}
+
+variable "no_proxy" {
+  type    = string
+  default = "127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+}
