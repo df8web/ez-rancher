@@ -32,7 +32,7 @@ spec:
       tty: true
       command: ["cat"]
     - name: dind
-      image: docker:18.05-dind
+      image: docker:dind
       args:
       - --dns-opt='options single-request'
       securityContext:
@@ -111,6 +111,7 @@ spec:
                         DELIVERABLES=deliverables
                         docker run --rm --env-file env.list \
                             -v `pwd`/deliverables:/terraform/vsphere-rancher/deliverables \
+                            --network host \
                             ez-rancher:${COMMIT_SLUG} apply -auto-approve -input=false
                         """
                     }
