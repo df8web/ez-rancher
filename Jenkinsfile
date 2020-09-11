@@ -40,8 +40,19 @@ spec:
       volumeMounts:
         - name: dind-storage
           mountPath: /var/lib/docker
+    - name: dind2
+      image: docker:dind
+      args:
+      - --dns-opt='options single-request'
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: dind2-storage
+          mountPath: /var/lib/docker
   volumes:
     - name: dind-storage
+      emptyDir: {}
+    - name: dind2-storage
       emptyDir: {}
 """
       }
@@ -89,7 +100,12 @@ spec:
             steps {
                 container('dind') {
                     sh """
-                        docker build --no-cache -t ez-rancher:${COMMIT_SLUG} .
+                        docker build --network host --no-cache -t ez-rancher:${COMMIT_SLUG} .
+                        """
+                }
+                container('dind2') {
+                    sh """
+                        docker build --network host --no-cache -t ez-rancher:${COMMIT_SLUG} .
                         """
                 }
             }
@@ -119,7 +135,7 @@ spec:
                 }
                 stage ('Proxy') {
                     steps {
-                        container('dind') {
+                        container('dind2') {
                             withCredentials([file(credentialsId: 'ez-rancher-proxy', variable: 'TFVARS')]) {
                             sh """
                                 cd terraform/vsphere-rancher
@@ -152,6 +168,20 @@ spec:
                     """
             }
             container('dind') {
+                sh """
+                    docker rmi ez-rancher:${COMMIT_SLUG}
+                    """
+            }
+            container('dind2') {
+                sh """
+                    cd terraform/vsphere-rancher
+                    docker run --rm --env-file env.list \
+                        -v `pwd`/deliverables:/terraform/vsphere-rancher/deliverables \
+                        --network host \
+                        ez-rancher:${COMMIT_SLUG} destroy -auto-approve -input=false
+                    """
+            }
+            container('dind2') {
                 sh """
                     docker rmi ez-rancher:${COMMIT_SLUG}
                     """
