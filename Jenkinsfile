@@ -92,11 +92,6 @@ spec:
                         docker build --network host --no-cache -t ez-rancher:${COMMIT_SLUG} .
                         """
                 }
-                container('dind2') {
-                    sh """
-                        docker build --network host --no-cache -t ez-rancher:${COMMIT_SLUG} .
-                        """
-                }
             }
         }
 
