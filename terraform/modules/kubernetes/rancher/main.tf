@@ -26,7 +26,7 @@ resource "rke_cluster" "cluster" {
       service_cluster_ip_range = "10.44.0.0/16"
     }
     kube_controller {
-      cluster_cidr = "10.45.0.0/16"
+      cluster_cidr             = "10.45.0.0/16"
       service_cluster_ip_range = "10.44.0.0/16"
     }
   }
