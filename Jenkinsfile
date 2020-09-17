@@ -40,19 +40,8 @@ spec:
       volumeMounts:
         - name: dind-storage
           mountPath: /var/lib/docker
-    - name: dind2
-      image: docker:dind
-      args:
-      - --dns-opt='options single-request'
-      securityContext:
-        privileged: true
-      volumeMounts:
-        - name: dind2-storage
-          mountPath: /var/lib/docker
   volumes:
     - name: dind-storage
-      emptyDir: {}
-    - name: dind2-storage
       emptyDir: {}
 """
       }
@@ -124,7 +113,7 @@ spec:
                                 cat ${TFVARS} > env.list
                                 echo "TF_VAR_vm_name=ezr-${COMMIT_SLUG}" >> env.list
                                 mkdir deliverables
-                                docker run --rm --env-file env.list \
+                                #docker run --rm --env-file env.list \
                                     -v `pwd`/deliverables:/terraform/vsphere-rancher/deliverables \
                                     --network host \
                                     ez-rancher:${COMMIT_SLUG} apply -auto-approve -input=false
@@ -135,7 +124,7 @@ spec:
                 }
                 stage ('Proxy') {
                     steps {
-                        container('dind2') {
+                        container('dind') {
                             withCredentials([file(credentialsId: 'ez-rancher-proxy', variable: 'TFVARS')]) {
                             sh """
                                 cd terraform/vsphere-rancher
@@ -168,20 +157,6 @@ spec:
                     """
             }
             container('dind') {
-                sh """
-                    docker rmi ez-rancher:${COMMIT_SLUG}
-                    """
-            }
-            container('dind2') {
-                sh """
-                    cd terraform/vsphere-rancher
-                    docker run --rm --env-file env.list \
-                        -v `pwd`/deliverables:/terraform/vsphere-rancher/deliverables \
-                        --network host \
-                        ez-rancher:${COMMIT_SLUG} destroy -auto-approve -input=false
-                    """
-            }
-            container('dind2') {
                 sh """
                     docker rmi ez-rancher:${COMMIT_SLUG}
                     """
