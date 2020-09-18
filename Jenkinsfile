@@ -128,6 +128,7 @@ spec:
                                 source env.list
                                 set +a
                                 export TF_VAR_vm_name=ezr-${COMMIT_SLUG}-proxy
+                                rm -rf deliverables
                                 mkdir deliverables
                                 terraform apply -auto-approve -input=false
                                 #docker run --rm --env-file env.list \
