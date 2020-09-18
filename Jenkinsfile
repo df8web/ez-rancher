@@ -119,15 +119,18 @@ spec:
                 }
                 stage ('Proxy') {
                     steps {
-                        container('dind') {
+                        container('tf') {
                             withCredentials([file(credentialsId: 'ez-rancher-proxy', variable: 'TFVARS')]) {
                             sh """
                                 cd terraform/vsphere-rancher
-                                apk add --no-cache bash make
                                 cat ${TFVARS} > env.list
-                                echo "TF_VAR_vm_name=ezr-${COMMIT_SLUG}-proxy" >> env.list
-                                mkdir deliverables-proxy
-                                docker run --rm --env-file env.list \
+                                set -a
+                                source env.list
+                                set +a
+                                export TF_VAR_vm_name=ezr-${COMMIT_SLUG}-proxy
+                                mkdir deliverables
+                                terraform apply -auto-approve -input=false
+                                #docker run --rm --env-file env.list \
                                     -v `pwd`/deliverables-proxy:/terraform/vsphere-rancher/deliverables \
                                     --network host \
                                     ez-rancher:${COMMIT_SLUG} apply -auto-approve -input=false
