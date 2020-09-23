@@ -18,12 +18,13 @@ There are 2 ways to run EZ-Rancher:
 2. Terraform CLI
 
     You have a working Terraform environment with the following dependencies:
-    * [Terraform](https://www.terraform.io/downloads.html) >= 0.12
+    * [Terraform](https://www.terraform.io/downloads.html) >= 0.13
     * [Kubectl](https://downloadkubernetes.com/)
     * [Terraform RKE plugin](https://github.com/rancher/terraform-provider-rke)
     * netcat
 
-(We recommend you check the CVE for the above tools and only use versions without security issues)
+> We recommend you check the CVE for the above tools and only use versions without security issues and 
+> have at least 2 GB of memory free in the environment running ez-rancher.
 
 ### vSphere
 
@@ -101,12 +102,12 @@ files from a previous run you'll want to copy them to another location.
 
 ```bash
 # direct docker command to create the cluster
-docker run -it --rm $[PWD}/rancher.tfvars:/terraform/vsphere-rancher/terraform.tfvars -v ${PWD}/deliverables:/terraform/vsphere-rancher/deliverables netapp/ez-rancher apply -auto-approve
+docker run -it --rm ${PWD}/rancher.tfvars:/terraform/vsphere-rancher/terraform.tfvars -v ${PWD}/deliverables:/terraform/vsphere-rancher/deliverables netapp/ez-rancher apply -auto-approve
 ```
 
 ```bash
 # direct docker command to delete a created cluster
-docker run -it --rm $[PWD}/rancher.tfvars:/terraform/vsphere-rancher/terraform.tfvars -v ${PWD}/deliverables:/terraform/vsphere-rancher/deliverables netapp/ez-rancher destroy -auto-approve
+docker run -it --rm ${PWD}/rancher.tfvars:/terraform/vsphere-rancher/terraform.tfvars -v ${PWD}/deliverables:/terraform/vsphere-rancher/deliverables netapp/ez-rancher destroy -auto-approve
 ```
 
 ### Terraform CLI

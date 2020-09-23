@@ -97,47 +97,23 @@ spec:
 
 
         stage ('Deploy') {
-            parallel {
-                stage ('DHCP') {
-                    steps {
-                        container('dind') {
-                            withCredentials([file(credentialsId: 'ez-rancher-olab', variable: 'TFVARS')]) {
-                            sh """
-                                cd terraform/vsphere-rancher
-                                apk add --no-cache bash make
-                                cat ${TFVARS} > env.list
-                                echo "TF_VAR_vm_name=ezr-${COMMIT_SLUG}" >> env.list
-                                mkdir deliverables
-                                #docker run --rm --env-file env.list \
-                                    -v `pwd`/deliverables:/terraform/vsphere-rancher/deliverables \
-                                    --network host \
-                                    ez-rancher:${COMMIT_SLUG} apply -auto-approve -input=false
-                                """
-                            }
-                        }
-                    }
-                }
-                stage ('Proxy') {
-                    steps {
-                        container('tf') {
-                            withCredentials([file(credentialsId: 'ez-rancher-proxy', variable: 'TFVARS')]) {
-                            sh """
-                                cd terraform/vsphere-rancher
-                                cat ${TFVARS} > env.list
-                                set -a
-                                source env.list
-                                set +a
-                                export TF_VAR_vm_name=ezr-${COMMIT_SLUG}-proxy
-                                rm -rf deliverables
-                                mkdir deliverables
-                                terraform apply -auto-approve -input=false
-                                #docker run --rm --env-file env.list \
-                                    -v `pwd`/deliverables-proxy:/terraform/vsphere-rancher/deliverables \
-                                    --network host \
-                                    ez-rancher:${COMMIT_SLUG} apply -auto-approve -input=false
-                                """
-                            }
-                        }
+            steps {
+                container('dind') {
+                    withCredentials([file(credentialsId: 'ez-rancher-olab', variable: 'TFVARS')]) {
+                    sh """
+                        cd terraform/vsphere-rancher
+                        apk add --no-cache bash make
+                        cat ${TFVARS} > env.list
+                        echo "TF_VAR_vm_name=ezr-${COMMIT_SLUG}" >> env.list
+                        mkdir deliverables  
+                        EZR_IMAGE_NAME=ez-rancher
+                        EZR_IMAGE_TAG=latest
+                        DELIVERABLES=deliverables
+                        docker run --rm --env-file env.list \
+                            -v `pwd`/deliverables:/terraform/vsphere-rancher/deliverables \
+                            --network host \
+                            ez-rancher:${COMMIT_SLUG} apply -auto-approve -input=false
+                        """
                     }
                 }
             }

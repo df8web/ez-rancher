@@ -26,6 +26,9 @@ vm_template_name = "bionic-server-cloudimg-amd64"
 # (Optional) Default gateway (IPv4) to assign to nodes. Required if using static ips.
 # default_gateway  = "10.1.1.1"
 
+# (Optional) DNS servers to assign to the nodes
+# dns_servers = ["1.1.1.1", "8.8.8.8"]
+
 # ============================ #
 # VMware vSphere configuration #
 # ============================ #
