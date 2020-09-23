@@ -65,4 +65,6 @@ module "rancher" {
   bootstrap_rancher          = var.bootstrap_rancher
   http_proxy                 = var.http_proxy
   no_proxy                   = var.no_proxy
+  rancher_cluster_cidr       = var.rancher_cluster_cidr
+  rancher_service_cidr       = var.rancher_service_cidr
 }

@@ -119,3 +119,13 @@ variable "no_proxy" {
   type    = string
   default = "127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
 }
+
+variable "rancher_cluster_cidr" {
+  type    = string
+  default = "10.42.0.0/16"
+}
+
+variable "rancher_service_cidr" {
+  type    = string
+  default = "10.43.0.0/16"
+}

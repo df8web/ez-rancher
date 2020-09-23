@@ -21,6 +21,15 @@ resource "rke_cluster" "cluster" {
   depends_on = [var.vm_depends_on]
   # 2 minute timeout specifically for rke-network-plugin-deploy-job but will apply to any addons
   addon_job_timeout = 120
+  services {
+    kube_api {
+      service_cluster_ip_range = var.rancher_service_cidr
+    }
+    kube_controller {
+      cluster_cidr             = var.rancher_cluster_cidr
+      service_cluster_ip_range = var.rancher_service_cidr
+    }
+  }
   dynamic "nodes" {
     for_each = [for node in var.cluster_nodes : {
       name = node["name"]
