@@ -26,7 +26,7 @@ COPY terraform/ /terraform/
 
 WORKDIR /terraform/vsphere-rancher
 
-RUN mkdir -p /terraform/vsphere-rancher/.terraform/plugins/linux_amd64/ && touch /terraform/vsphere-rancher/.terraform/plugins/linux_amd64/.keep \
+RUN mkdir -p /terraform/vsphere-rancher/.terraform/plugins/ && touch /terraform/vsphere-rancher/.terraform/plugins/.keep \
   && if ${EZR_COMPRESS_BINARIES}; then /install_upx.sh; terraform init; /compress_binaries.sh; terraform init; fi
 
 
@@ -42,6 +42,6 @@ COPY terraform/ /terraform/
 
 WORKDIR /terraform/vsphere-rancher
 
-RUN touch terragrunt.hcl && terraform init
+RUN touch terragrunt.hcl && terraform init && rm -rf /tmp/*
 
 ENTRYPOINT ["terragrunt"]

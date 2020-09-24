@@ -127,6 +127,7 @@ spec:
                     cd terraform/vsphere-rancher
                     docker run --rm --env-file env.list \
                         -v `pwd`/deliverables:/terraform/vsphere-rancher/deliverables \
+                        --network host \
                         ez-rancher:${COMMIT_SLUG} destroy -auto-approve -input=false
                     """
             }
