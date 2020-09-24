@@ -156,27 +156,27 @@ resource "local_file" "rancher_api_key" {
 
 data "http" "trident_installer_crd" {
   count = var.bootstrap_rancher && var.create_trident_cluster_template ? 1 : 0
-  url   = "https://raw.githubusercontent.com/sgryczan/TridentInstaller/master/deploy/crds/tridentinstall.czan.io_tridentinstallations_crd.yaml"
+  url   = "https://raw.githubusercontent.com/netapp/TridentInstaller/master/deploy/crds/tridentinstall.czan.io_tridentinstallations_crd.yaml"
 }
 
 data "http" "trident_installer_operator" {
   count = var.bootstrap_rancher && var.create_trident_cluster_template ? 1 : 0
-  url   = "https://raw.githubusercontent.com/sgryczan/TridentInstaller/master/deploy/operator.yaml"
+  url   = "https://raw.githubusercontent.com/netapp/TridentInstaller/master/deploy/operator.yaml"
 }
 
 data "http" "trident_installer_role" {
   count = var.bootstrap_rancher && var.create_trident_cluster_template ? 1 : 0
-  url   = "https://raw.githubusercontent.com/sgryczan/TridentInstaller/master/deploy/role.yaml"
+  url   = "https://raw.githubusercontent.com/netapp/TridentInstaller/master/deploy/role.yaml"
 }
 
 data "http" "trident_installer_rolebinding" {
   count = var.bootstrap_rancher && var.create_trident_cluster_template ? 1 : 0
-  url   = "https://raw.githubusercontent.com/sgryczan/TridentInstaller/master/deploy/role_binding.yaml"
+  url   = "https://raw.githubusercontent.com/netapp/TridentInstaller/master/deploy/role_binding.yaml"
 }
 
 data "http" "trident_installer_serviceaccount" {
   count = var.bootstrap_rancher && var.create_trident_cluster_template ? 1 : 0
-  url   = "https://raw.githubusercontent.com/sgryczan/TridentInstaller/master/deploy/service_account.yaml"
+  url   = "https://raw.githubusercontent.com/netapp/TridentInstaller/master/deploy/service_account.yaml"
 }
 
 data "template_file" "trident_namespace" {
